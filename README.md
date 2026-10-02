@@ -1,97 +1,81 @@
 # COVID-19 Chest X-Ray Classifier
 
-A deep learning image classification project that identifies **Covid-19**, **Viral Pneumonia**, or **Normal** condition from chest X-ray images, using transfer learning with MobileNetV2. Training was operationalized on **Azure Machine Learning** as a cloud-based ML job with a registered dataset and model registry.
+A deep learning image classifier that categorizes chest X-ray images into three classes — **Covid**, **Normal**, and **Viral Pneumonia** — using transfer learning with MobileNetV2 (Keras/TensorFlow).
 
-## Overview
+## 📌 Project Overview
 
-- **Task:** Multi-class image classification (3 classes) on chest X-ray images
-- **Approach:** Transfer learning using a frozen MobileNetV2 backbone (pretrained on ImageNet) with a custom classification head
-- **Test Accuracy:** 93.94%
-- **Platform:** Trained via an Azure Machine Learning job, with the dataset registered as a versioned Data Asset and the trained model registered in the Azure ML Model Registry
+This project trains a convolutional neural network (via transfer learning) to classify chest X-ray images. It includes:
+- Exploratory data analysis (class distribution, sample image visualization)
+- Data augmentation and preprocessing pipeline
+- A MobileNetV2-based transfer learning model
+- Model evaluation (accuracy, classification report, confusion matrix)
+- A prediction function to classify new/unseen X-ray images
 
-## Dataset
+## ⚠️ Disclaimer
 
-Chest X-ray dataset split into `train` and `test` folders across three classes:
+This is an **academic/educational machine learning project**, built as part of MBA coursework (AI & Data Science). It is **not a validated medical diagnostic tool** and should **not** be used for actual clinical diagnosis or treatment decisions. Predictions are for learning/demonstration purposes only.
 
-| Split | Covid | Normal | Viral Pneumonia |
-|-------|-------|--------|------------------|
-| Train | 111   | 70     | 70               |
-| Test  | 26    | 20     | 20               |
+## 📂 Dataset
 
-## Model Architecture
-
-```
-MobileNetV2 (frozen, ImageNet weights)
-        ↓
-GlobalAveragePooling2D
-        ↓
-Dense(128, relu)
-        ↓
-Dropout(0.4)
-        ↓
-Dense(3, softmax)
-```
-
-- **Optimizer:** Adam (lr = 0.0001)
-- **Loss:** Categorical Crossentropy
-- **Class imbalance handling:** Class weights computed and applied during training (dataset had more Covid samples than Normal/Pneumonia)
-- **Regularization:** Data augmentation (rotation, zoom, shift, horizontal flip) + Dropout
-- **Epochs:** 15 (with EarlyStopping and ModelCheckpoint)
-
-## Results
-
-**Overall test accuracy: 93.94%**
-
-| Class            | Precision | Recall | F1-score |
-|-------------------|-----------|--------|----------|
-| Covid              | 0.9630    | 1.0000 | 0.9811   |
-| Normal             | 1.0000    | 0.8500 | 0.9189   |
-| Viral Pneumonia    | 0.8636    | 0.9500 | 0.9048   |
-
-Covid-19 cases were detected with **100% recall**, meaning no Covid case in the test set was missed by the model.
-
-## Pipeline (Azure Machine Learning)
-
-1. **Data Registration** — Dataset uploaded and registered as a versioned Azure ML Data Asset (`uri_folder` type)
-2. **Training Script** — `train.py` — a standalone script that loads the registered dataset, builds the model, trains it, and saves the output
-3. **Cloud Training Job** — Submitted as an Azure ML `command` job on a compute instance, using a TensorFlow-based curated environment
-4. **Model Registration** — The trained model artifact was registered in the Azure ML Model Registry for versioning and traceability
-5. **Inference** — Predictions are made via a reusable Python function (`predict_xray()`) that loads the saved model and classifies any input chest X-ray image with a confidence score
-
-> **Note:** A real-time online endpoint deployment was also attempted using Azure ML Managed Online Endpoints. Due to compute and timeout constraints on the free/student subscription tier, the endpoint did not reliably serve predictions, so direct model inference (`predict_xray()`) was used instead as the primary prediction interface.
-
-## Repository Structure
+- **Source:** [COVID-19 Image Dataset](https://www.kaggle.com/datasets/pranavraikokte/covid19-image-dataset) by Pranav Raikokte, via Kaggle
+- Used strictly for academic/educational purposes — not redistributed for any commercial use
+- Original X-ray images were compiled from publicly available radiology sources (including Radiopaedia and similar medical imaging repositories)
+- Classes: `Covid`, `Normal`, `Viral Pneumonia`
+- Split: pre-divided into `train/` and `test/` folders
 
 ```
-├── train.py                    # Training script (used in the Azure ML job)
-├── score.py                    # Scoring script (used for online endpoint attempt)
-├── COVID19_X-RAY.ipynb         # Full notebook: EDA, training, evaluation, inference
-├── README.md
-└── screenshots/                # Sample outputs (confusion matrix, predictions, Azure ML job)
+Covid19-dataset/
+├── train/
+│   ├── Covid/
+│   ├── Normal/
+│   └── Viral Pneumonia/
+└── test/
+    ├── Covid/
+    ├── Normal/
+    └── Viral Pneumonia/
 ```
 
-> Dataset files and trained model weights (`.keras`) are not included in this repository due to size. See below for how to obtain/regenerate them.
+> Full credit to the original dataset creator and the underlying public radiology image sources. If you are the rights holder of any image and have concerns about its inclusion here, please reach out and it will be addressed.
 
-## How to Run
+## 🛠️ Tech Stack
+
+- Python, TensorFlow / Keras
+- MobileNetV2 (pretrained on ImageNet) — transfer learning
+- Matplotlib, Seaborn (visualization)
+- Scikit-learn (evaluation metrics)
+- Jupyter Lab / Notebook
+
+## 🚀 How to Run
 
 1. Clone this repository
-2. Place the chest X-ray dataset (train/test folders with Covid, Normal, Viral Pneumonia subfolders) in the project root as `Covid19-dataset/`
-3. Install dependencies:
    ```bash
-   pip install tensorflow matplotlib seaborn scikit-learn pillow
+   git clone <your-repo-url>
+   cd covid19-xray-classifier
    ```
-4. Run the notebook `COVID19_X-RAY.ipynb` to train the model and reproduce results
-5. To predict on a new image:
-   ```python
-   predict_xray("path/to/xray_image.jpg")
+2. Install dependencies
+   ```bash
+   pip install -r requirements.txt
    ```
+3. Make sure the `Covid19-dataset/` folder (train/test) is in the project root
+4. Open `covid19_xray_classifier.ipynb` in Jupyter Lab and run all cells top to bottom
 
-## Tools & Technologies
+## 📊 Results
 
-Python, TensorFlow/Keras, MobileNetV2, scikit-learn, Azure Machine Learning (Data Assets, Jobs, Model Registry, Managed Online Endpoints)
+| Metric | Value |
+|---|---|
+| Test Accuracy | _fill in after training_ |
 
-## Author
+(Add your confusion matrix / classification report screenshot here after training.)
+
+## 🔮 Example Prediction
+
+```python
+predict_xray("Covid19-dataset/test/Covid/0100.jpeg")
+# Output: Prediction: Covid (confidence: XX.X%)
+```
+
+## 👤 Author
 
 **Megha Pokhariya**
-MBA (AI & Data Science), Graphic Era University
+MBA (AI & Data Science), Graphic Era University, Dehradun
 [GitHub](https://github.com/Megha-Pokhariya)
