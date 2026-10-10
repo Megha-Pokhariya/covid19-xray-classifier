@@ -4,15 +4,15 @@ An end-to-end deep learning project that classifies chest X-ray images into **Co
 
 ## Project Overview
 
-This project was developed as part of academic work in AI and Data Science. It demonstrates the complete workflow from image classification model development to local application deployment.
+This project was developed as part of academic work in AI and Data Science. It demonstrates the workflow from image classification model development to local web application deployment.
 
 ### Key Features
 
-- MobileNetV2-based image classification using TensorFlow/Keras.
+- MobileNetV2-based image classification using TensorFlow and Keras.
 - Three-class prediction: Covid, Normal, and Viral Pneumonia.
-- Model training and evaluation using a Jupyter Notebook.
+- Model development and evaluation using a Jupyter Notebook.
 - FastAPI backend for image prediction.
-- Responsive web interface for uploading chest X-ray images.
+- Web interface for uploading chest X-ray images.
 - Image preview before prediction.
 - Prediction confidence and class-wise probability display.
 - Docker-based application deployment.
@@ -44,7 +44,7 @@ Predicted Class + Confidence
 + Class Probabilities
         |
         v
-COVID Positive / COVID Negative
+Application Result Label
 ```
 
 Docker packages the application and its dependencies for local execution.
@@ -54,8 +54,7 @@ Docker packages the application and its dependencies for local execution.
 - Python
 - TensorFlow and Keras
 - MobileNetV2
-- FastAPI
-- Uvicorn
+- FastAPI and Uvicorn
 - HTML and CSS
 - NumPy and Pillow
 - Docker and Docker Compose
@@ -72,9 +71,9 @@ The classifier uses transfer learning with MobileNetV2 pretrained on ImageNet. A
 
 Input images are resized to 224 × 224 pixels, converted to RGB, and normalized by dividing pixel values by 255.
 
-The trained model is reused by the application for inference; retraining is not required each time the application starts.
+The application reuses the trained Keras model for inference. Retraining is not required each time the application starts.
 
-## Application Structure
+## Project Structure
 
 ```text
 covid19-xray-classifier/
@@ -87,15 +86,13 @@ covid19-xray-classifier/
 ├── requirements.txt
 ├── Dockerfile
 ├── docker-compose.yml
-├── .dockerignore
-├── .gitignore
 ├── COVID19_X-RAY.ipynb
 ├── train.py
 ├── score.py
 └── README.md
 ```
 
-*Note: The exact filenames and folders in your repository may differ. Keep the existing notebook and training files, and add the application files to match the actual project structure.*
+The structure above describes the intended application layout. The notebook and training scripts are retained as part of the original machine learning workflow.
 
 ## Run the Application Locally
 
@@ -105,54 +102,52 @@ covid19-xray-classifier/
 - The trained Keras model file.
 - Git, if cloning the repository.
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Megha-Pokhariya/covid19-xray-classifier.git
 cd covid19-xray-classifier
 ```
 
-### 2. Add the trained model
+### 2. Check the Model File
 
-Place the trained model at:
+Ensure the trained model is present at:
 
 ```text
 models/covid_pneumonia_classifier.keras
 ```
 
-The model must match the three classes and preprocessing expected by the application. If the model is distributed separately, download it before starting the app.
+The model must match the class names and image preprocessing expected by the application.
 
-### 3. Start the Docker application
+### 3. Start the Docker Application
 
 ```bash
 docker compose up -d --build
 ```
 
-### 4. Check the running container
+### 4. Check the Running Container
 
 ```bash
 docker compose ps
 ```
 
-### 5. Open the web application
+### 5. Open the Web Application
 
 Open the following URL in your laptop browser:
 
-```text
-http://localhost:8000
-```
+**http://localhost:8000**
 
 Upload a chest X-ray image, preview it, and click the prediction button to view the result.
 
-### 6. Access from a phone
+### 6. Access from a Phone
 
-Connect the phone and laptop to the same Wi-Fi network. Find the laptop's local IPv4 address and open:
+Connect your phone and laptop to the same Wi-Fi network. Find your laptop's local IPv4 address and open the following URL on your phone:
 
 ```text
 http://YOUR-LAPTOP-IP:8000
 ```
 
-Replace `YOUR-LAPTOP-IP` with the laptop's actual Wi-Fi IPv4 address. Network firewall rules may need to allow access to port 8000.
+Replace `YOUR-LAPTOP-IP` with your laptop's actual local IPv4 address. Firewall settings may need to allow access to port 8000.
 
 ## API Endpoints
 
@@ -164,23 +159,23 @@ Replace `YOUR-LAPTOP-IP` with the laptop's actual Wi-Fi IPv4 address. Network fi
 
 Interactive API documentation is available at:
 
-```text
-http://localhost:8000/docs
-```
+**http://localhost:8000/docs**
 
 ## Understanding the Prediction
 
-The application displays the original predicted class, confidence score, and class-wise probabilities.
+The application displays the predicted class, confidence score, and class-wise probabilities.
 
-For the application's simplified result label:
+The application's simplified result mapping is:
 
 - `Covid` → **COVID Positive**
 - `Normal` → **COVID Negative**
 - `Viral Pneumonia` → **COVID Negative**
 
-This simplified label is only a project-specific demonstration rule. A `Viral Pneumonia` prediction does not establish that a person is COVID-negative.
+These labels follow a project-specific demonstration rule. A `Viral Pneumonia` or `Normal` prediction does not establish that a person is medically COVID-negative.
 
 ## Stop the Application
+
+To stop the Docker application:
 
 ```bash
 docker compose down
@@ -204,7 +199,7 @@ This project is intended **for academic and educational demonstration only**. It
 
 ## Author
 
-Megha Pokhariya  
+**Megha Pokhariya**  
 MBA — AI & Data Science  
 Graphic Era University, Dehradun
 
