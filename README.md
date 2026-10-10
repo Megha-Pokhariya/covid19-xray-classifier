@@ -1,22 +1,83 @@
 # COVID-19 Chest X-Ray Classification System
 
-An end-to-end deep learning project that classifies chest X-ray images into **Covid, Normal, and Viral Pneumonia** using MobileNetV2 transfer learning. The project combines machine learning model development with a web-based prediction application built using FastAPI, HTML, CSS, and Docker.
+An end-to-end deep learning project that classifies chest X-ray images into **COVID, Normal, and Viral Pneumonia** using MobileNetV2 transfer learning. The project combines model development and evaluation with a web-based prediction application built using FastAPI, HTML, CSS, and Docker.
 
 ## Project Overview
 
-This project was developed as part of academic work in AI and Data Science. It demonstrates the workflow from image classification model development to local web application deployment.
+This project demonstrates an image classification workflow, from training and evaluating a deep learning model to deploying it through a local web application. Users can upload a chest X-ray image and view the predicted class, prediction confidence, and class-wise probabilities.
 
-### Key Features
+**Academic project | Deep Learning | Computer Vision | FastAPI | Docker**
 
-- MobileNetV2-based image classification using TensorFlow and Keras.
-- Three-class prediction: Covid, Normal, and Viral Pneumonia.
-- Model development and evaluation using a Jupyter Notebook.
-- FastAPI backend for image prediction.
-- Web interface for uploading chest X-ray images.
-- Image preview before prediction.
+## Key Features
+
+- MobileNetV2 transfer learning with TensorFlow and Keras.
+- Three-class chest X-ray classification.
+- Test dataset evaluation using accuracy and classification metrics.
+- Confusion matrix and class-wise performance analysis.
+- FastAPI backend for model inference.
+- Web interface with image upload and preview.
 - Prediction confidence and class-wise probability display.
-- Docker-based application deployment.
-- Local browser access and optional access from a phone on the same Wi-Fi network.
+- Docker and Docker Compose support for local deployment.
+- Interactive API documentation through Swagger UI.
+
+## Model Performance
+
+The trained model was evaluated on the notebook's test dataset.
+
+| Evaluation Metric | Result |
+|---|---:|
+| Test images | 66 |
+| Correct predictions | 62 |
+| Incorrect predictions | 4 |
+| **Test accuracy** | **93.94%** |
+| Macro-average precision | 94.22% |
+| Macro-average recall | 93.33% |
+| Macro-average F1-score | 93.49% |
+| Weighted-average F1-score | 93.91% |
+
+### Class-Wise Classification Report
+
+| Class | Precision | Recall | F1-score | Test Images |
+|---|---:|---:|---:|---:|
+| Covid | 96.30% | 100.00% | 98.11% | 26 |
+| Normal | 100.00% | 85.00% | 91.89% | 20 |
+| Viral Pneumonia | 86.36% | 95.00% | 90.48% | 20 |
+
+**Note:** These metrics are from the saved outputs in the Jupyter Notebook. Performance may differ on new images and external datasets. The test set contains 66 images, so the reported accuracy should be interpreted in that context.
+
+## Confusion Matrix
+
+The confusion matrix compares the actual classes with the model's predicted classes.
+
+| Actual Class | Predicted Covid | Predicted Normal | Predicted Viral Pneumonia |
+|---|---:|---:|---:|
+| Covid | 26 | 0 | 0 |
+| Normal | 0 | 17 | 3 |
+| Viral Pneumonia | 1 | 0 | 19 |
+
+The model correctly classified all 26 Covid images in this test set. Three Normal images were classified as Viral Pneumonia, and one Viral Pneumonia image was classified as Covid.
+
+## Technology Stack
+
+- **Language:** Python
+- **Deep Learning:** TensorFlow, Keras
+- **Architecture:** MobileNetV2
+- **Image Processing:** NumPy, Pillow
+- **Model Evaluation:** Scikit-learn, Matplotlib, Seaborn
+- **Backend:** FastAPI, Uvicorn
+- **Frontend:** HTML, CSS, JavaScript
+- **Deployment:** Docker, Docker Compose
+- **Development:** Jupyter Notebook, VS Code, GitHub
+
+## Model and Image Preprocessing
+
+The model uses MobileNetV2 pretrained on ImageNet as the transfer-learning backbone, with a custom classification head for three classes:
+
+1. Covid
+2. Normal
+3. Viral Pneumonia
+
+Input images are resized to **224 × 224 pixels**, converted to RGB, and normalized by dividing pixel values by 255. The trained Keras model is reused for inference when the web application starts; retraining is not required for each prediction.
 
 ## Project Architecture
 
@@ -24,7 +85,7 @@ This project was developed as part of academic work in AI and Data Science. It d
 Chest X-Ray Image
         |
         v
-Web Interface (HTML/CSS)
+HTML/CSS Web Interface
         |
         v
 FastAPI Backend
@@ -41,37 +102,10 @@ Three-Class Prediction
         |
         v
 Predicted Class + Confidence
-+ Class Probabilities
-        |
-        v
-Application Result Label
++ Class-Wise Probabilities
 ```
 
 Docker packages the application and its dependencies for local execution.
-
-## Technology Stack
-
-- Python
-- TensorFlow and Keras
-- MobileNetV2
-- FastAPI and Uvicorn
-- HTML and CSS
-- NumPy and Pillow
-- Docker and Docker Compose
-- Azure Machine Learning
-- Jupyter Notebook
-
-## Machine Learning Model
-
-The classifier uses transfer learning with MobileNetV2 pretrained on ImageNet. A custom classification head predicts one of three classes:
-
-1. `Covid`
-2. `Normal`
-3. `Viral Pneumonia`
-
-Input images are resized to 224 × 224 pixels, converted to RGB, and normalized by dividing pixel values by 255.
-
-The application reuses the trained Keras model for inference. Retraining is not required each time the application starts.
 
 ## Project Structure
 
@@ -92,15 +126,15 @@ covid19-xray-classifier/
 └── README.md
 ```
 
-The structure above describes the intended application layout. The notebook and training scripts are retained as part of the original machine learning workflow.
+The notebook and training scripts support the machine learning workflow, while the `app` directory contains the web application.
 
 ## Run the Application Locally
 
 ### Prerequisites
 
-- Docker Desktop with WSL integration enabled, or a compatible Docker Engine.
-- The trained Keras model file.
-- Git, if cloning the repository.
+- Git
+- Docker Desktop with WSL integration enabled on Windows, or a compatible Docker Engine
+- Access to the trained model file
 
 ### 1. Clone the Repository
 
@@ -109,45 +143,53 @@ git clone https://github.com/Megha-Pokhariya/covid19-xray-classifier.git
 cd covid19-xray-classifier
 ```
 
-### 2. Check the Model File
+### 2. Verify the Model File
 
-Ensure the trained model is present at:
+Ensure that the following file exists:
 
 ```text
 models/covid_pneumonia_classifier.keras
 ```
 
-The model must match the class names and image preprocessing expected by the application.
+The model must be compatible with the class order and preprocessing expected by the application.
 
-### 3. Start the Docker Application
+### 3. Build and Start the Application
 
 ```bash
 docker compose up -d --build
 ```
 
-### 4. Check the Running Container
+### 4. Check the Container
 
 ```bash
 docker compose ps
 ```
 
-### 5. Open the Web Application
+### 5. Open the Web Interface
 
-Open the following URL in your laptop browser:
+Visit:
 
 **http://localhost:8000**
 
 Upload a chest X-ray image, preview it, and click the prediction button to view the result.
 
-### 6. Access from a Phone
+### 6. API Documentation
 
-Connect your phone and laptop to the same Wi-Fi network. Find your laptop's local IPv4 address and open the following URL on your phone:
+FastAPI's interactive documentation is available at:
 
-```text
-http://YOUR-LAPTOP-IP:8000
+**http://localhost:8000/docs**
+
+### 7. Stop the Application
+
+```bash
+docker compose down
 ```
 
-Replace `YOUR-LAPTOP-IP` with your laptop's actual local IPv4 address. Firewall settings may need to allow access to port 8000.
+To start the application again later:
+
+```bash
+docker compose up -d
+```
 
 ## API Endpoints
 
@@ -157,45 +199,29 @@ Replace `YOUR-LAPTOP-IP` with your laptop's actual local IPv4 address. Firewall 
 | GET | `/health` | Checks application health |
 | POST | `/predict` | Accepts an image and returns prediction details |
 
-Interactive API documentation is available at:
-
-**http://localhost:8000/docs**
-
 ## Understanding the Prediction
 
 The application displays the predicted class, confidence score, and class-wise probabilities.
 
-The application's simplified result mapping is:
+For this project's demonstration interface, the result mapping is:
 
-- `Covid` → **COVID Positive**
-- `Normal` → **COVID Negative**
-- `Viral Pneumonia` → **COVID Negative**
+- `Covid` → `COVID Positive`
+- `Normal` → `COVID Negative`
+- `Viral Pneumonia` → `COVID Negative`
 
-These labels follow a project-specific demonstration rule. A `Viral Pneumonia` or `Normal` prediction does not establish that a person is medically COVID-negative.
+These labels represent a simplified application rule, not a clinically validated diagnosis. A Normal or Viral Pneumonia prediction does not establish that a person is COVID-negative.
 
-## Stop the Application
-
-To stop the Docker application:
-
-```bash
-docker compose down
-```
-
-To start it again later:
-
-```bash
-docker compose up -d
-```
+**Prediction confidence is not the same as test accuracy.** The reported 93.94% accuracy is calculated from the notebook's test evaluation, whereas an individual prediction's confidence applies only to that image.
 
 ## Dataset
 
-The original machine learning project uses the [COVID-19 Image Dataset on Kaggle](https://www.kaggle.com/datasets/pranavraikokte/covid19-image-dataset).
+The original machine learning project uses the COVID-19 Image Dataset from Kaggle, with the three classes used by the classifier. Refer to the original dataset source for licensing, terms of use, and attribution requirements.
 
-The dataset contains the three classes used by the classifier. Refer to the original dataset source for its terms of use and attribution requirements.
+## Limitations and Medical Disclaimer
 
-## Academic Disclaimer
+This project is intended for academic and educational demonstration only. It is not a clinically validated medical diagnostic system. Its test dataset contains 66 images, and performance may not generalize to other populations, hospitals, imaging equipment, or datasets.
 
-This project is intended **for academic and educational demonstration only**. It is not a clinically validated medical diagnostic system. Predictions may be inaccurate and must not be used to diagnose, exclude, or treat COVID-19 or any other medical condition. Consult qualified healthcare professionals for medical assessment.
+Predictions may be incorrect and must not be used to diagnose, exclude, or treat COVID-19, pneumonia, or any other medical condition. Consult qualified healthcare professionals for medical assessment.
 
 ## Author
 
